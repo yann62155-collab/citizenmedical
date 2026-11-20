@@ -15,6 +15,8 @@ import java.util.List;
 /** Reglages modifiables dans config/citizenmedical.json (/medical recharger pour les relire). */
 public final class MedicalConfig {
     public static final class Data {
+        /** Version du format (2 = hopital reconnu uniquement par l'emblème HOP). */
+        public int version = 2;
         /** Chance (0 a 1) qu'un coup qualifiant provoque une blessure. */
         public double chanceBlessure = 0.5;
         /** Degats minimum (en points de vie, 2 = 1 coeur) d'un coup (joueur, monstre, projectile, explosion). */
@@ -40,10 +42,13 @@ public final class MedicalConfig {
         public double distanceExamen = 32.0;
         public double distanceSoin = 6.0;
 
-        /** Une entreprise ACTIVE est un hopital si son emblème, son matricule, son nom ou son secteur correspond. */
-        public List<String> emblemesHopital = new ArrayList<>(List.of("HOP", "MED"));
+        /**
+         * Une entreprise ACTIVE est un hopital si son emblème (HOP dans Citizen Economy) ou son matricule est listé.
+         * motsClesHopital (vide par defaut) : reconnaitre aussi d'apres le nom / secteur.
+         */
+        public List<String> emblemesHopital = new ArrayList<>(List.of("HOP"));
         public List<String> matriculesHopital = new ArrayList<>();
-        public List<String> motsClesHopital = new ArrayList<>(List.of("hopital", "hospital", "medecin", "medical", "clinique", "infirmerie", "guerisseur", "dispensaire"));
+        public List<String> motsClesHopital = new ArrayList<>();
         /** Les operateurs (OP niveau 2) ont aussi les droits de medecin. */
         public boolean opsSontMedecins = true;
     }
@@ -61,7 +66,17 @@ public final class MedicalConfig {
             if (Files.exists(f)) {
                 try (Reader r = Files.newBufferedReader(f, StandardCharsets.UTF_8)) {
                     Data d = GSON.fromJson(r, Data.class);
-                    if (d != null) data = d;
+                    if (d != null) {
+                        if (d.version < 2) { // ancien format : soins reserves a l'emblème HOP
+                            d.emblemesHopital = new ArrayList<>(List.of("HOP"));
+                            d.motsClesHopital = new ArrayList<>();
+                            d.version = 2;
+                        }
+                        if (d.emblemesHopital == null) d.emblemesHopital = new ArrayList<>(List.of("HOP"));
+                        if (d.matriculesHopital == null) d.matriculesHopital = new ArrayList<>();
+                        if (d.motsClesHopital == null) d.motsClesHopital = new ArrayList<>();
+                        data = d;
+                    }
                 }
             }
             save();
