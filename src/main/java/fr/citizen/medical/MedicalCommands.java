@@ -68,7 +68,7 @@ public final class MedicalCommands {
         ServerPlayer doc = c.getSource().getPlayerOrException();
         ServerPlayer t = EntityArgument.getPlayer(c, "joueur");
         if (!Hospital.isDoctor(doc)) return notDoctor(doc);
-        if (!doc.hasPermissions(2) && (doc.level() != t.level() || doc.distanceTo(t) > MedicalConfig.get().distanceExamen)) {
+        if (doc.level() != t.level() || doc.distanceTo(t) > MedicalConfig.get().distanceExamen) {
             doc.sendSystemMessage(Component.literal("Ce patient est trop loin pour être examiné.").withStyle(ChatFormatting.RED));
             return 0;
         }
@@ -90,11 +90,10 @@ public final class MedicalCommands {
     /** null si le soin est permis, sinon le message d'erreur. Partage avec le bouton du HUD. */
     public static String canTreat(ServerPlayer doc, ServerPlayer t) {
         if (!Hospital.isDoctor(doc)) {
-            return Hospital.known(doc.getUUID()) ? "Seuls les médecins de l'hôpital peuvent soigner." : "Vérification de votre métier en cours… réessayez dans un instant.";
+            return Hospital.known(doc.getUUID()) ? "Seuls les médecins embauchés à l'hôpital (emblème HOP) peuvent soigner." : "Vérification de votre métier en cours… réessayez dans un instant.";
         }
-        boolean op = doc.hasPermissions(2);
-        if (doc == t && !op) return "Un médecin ne peut pas se soigner lui-même : faites appel à un collègue.";
-        if (!op && (doc.level() != t.level() || doc.distanceTo(t) > MedicalConfig.get().distanceSoin)) {
+        if (doc == t) return "Un médecin ne peut pas se soigner lui-même : faites appel à un collègue.";
+        if ((doc.level() != t.level() || doc.distanceTo(t) > MedicalConfig.get().distanceSoin)) {
             return "Approchez-vous du patient (moins de " + (int) MedicalConfig.get().distanceSoin + " blocs) pour le soigner.";
         }
         return null;

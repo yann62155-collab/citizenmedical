@@ -15,8 +15,8 @@ import java.util.List;
 /** Reglages modifiables dans config/citizenmedical.json (/medical recharger pour les relire). */
 public final class MedicalConfig {
     public static final class Data {
-        /** Version du format (2 = hopital reconnu uniquement par l'emblème HOP). */
-        public int version = 2;
+        /** Version du format (3 = HOP uniquement, OP non medecins par defaut). */
+        public int version; // 0 si absent du fichier -> migration
         /** Chance (0 a 1) qu'un coup qualifiant provoque une blessure. */
         public double chanceBlessure = 0.5;
         /** Degats minimum (en points de vie, 2 = 1 coeur) d'un coup (joueur, monstre, projectile, explosion). */
@@ -49,8 +49,8 @@ public final class MedicalConfig {
         public List<String> emblemesHopital = new ArrayList<>(List.of("HOP"));
         public List<String> matriculesHopital = new ArrayList<>();
         public List<String> motsClesHopital = new ArrayList<>();
-        /** Les operateurs (OP niveau 2) ont aussi les droits de medecin. */
-        public boolean opsSontMedecins = true;
+        /** true = les operateurs (OP niveau 2) ont aussi les droits de medecin sans etre embauches. */
+        public boolean opsSontMedecins = false;
     }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -63,27 +63,31 @@ public final class MedicalConfig {
     public static synchronized void load() {
         Path f = file();
         try {
+            if (!Files.exists(f)) data = migrate(new Data());
             if (Files.exists(f)) {
                 try (Reader r = Files.newBufferedReader(f, StandardCharsets.UTF_8)) {
                     Data d = GSON.fromJson(r, Data.class);
-                    if (d != null) {
-                        if (d.version < 2) { // ancien format : soins reserves a l'emblème HOP
-                            d.emblemesHopital = new ArrayList<>(List.of("HOP"));
-                            d.motsClesHopital = new ArrayList<>();
-                            d.version = 2;
-                        }
-                        if (d.emblemesHopital == null) d.emblemesHopital = new ArrayList<>(List.of("HOP"));
-                        if (d.matriculesHopital == null) d.matriculesHopital = new ArrayList<>();
-                        if (d.motsClesHopital == null) d.motsClesHopital = new ArrayList<>();
-                        data = d;
-                    }
+                    if (d != null) data = migrate(d);
                 }
             }
             save();
         } catch (Exception e) {
             CitizenMedical.LOGGER.warn("Citizen Medical : config illisible, valeurs par defaut utilisees", e);
-            data = new Data();
+            data = migrate(new Data());
         }
+    }
+
+    private static Data migrate(Data d) {
+        if (d.version < 2) { // soins reserves a l'emblème HOP
+            d.emblemesHopital = new ArrayList<>(List.of("HOP"));
+            d.motsClesHopital = new ArrayList<>();
+        }
+        if (d.version < 3) d.opsSontMedecins = false; // seuls les medecins embauches soignent
+        d.version = 3;
+        if (d.emblemesHopital == null) d.emblemesHopital = new ArrayList<>(List.of("HOP"));
+        if (d.matriculesHopital == null) d.matriculesHopital = new ArrayList<>();
+        if (d.motsClesHopital == null) d.motsClesHopital = new ArrayList<>();
+        return d;
     }
 
     public static synchronized void save() {

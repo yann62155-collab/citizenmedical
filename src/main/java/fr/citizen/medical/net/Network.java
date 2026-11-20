@@ -37,7 +37,7 @@ public final class Network {
                 doc.displayClientMessage(Component.literal("Seuls les médecins de l'hôpital peuvent examiner les blessures.").withStyle(ChatFormatting.RED), true);
                 return;
             }
-            if (!doc.hasPermissions(2) && (doc.level() != t.level() || doc.distanceTo(t) > MedicalConfig.get().distanceExamen)) {
+            if (doc.level() != t.level() || doc.distanceTo(t) > MedicalConfig.get().distanceExamen) {
                 doc.displayClientMessage(Component.literal("Patient trop loin pour être examiné.").withStyle(ChatFormatting.RED), true);
                 return;
             }

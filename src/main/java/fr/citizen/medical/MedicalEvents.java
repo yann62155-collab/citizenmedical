@@ -54,6 +54,14 @@ public final class MedicalEvents {
             if (e.getEntity() instanceof ServerPlayer p) Wounds.applyLimp(p, Wounds.get(p).wounded());
         });
         bus.addListener(PlayerInteractEvent.EntityInteract.class, MedicalEvents::onInteract);
+        // /cadmin on|off : on remet a jour la touche Alt tout de suite (apres execution de la commande)
+        bus.addListener(net.neoforged.neoforge.event.CommandEvent.class, e -> {
+            String cmd = e.getParseResults().getReader().getString();
+            if (cmd.startsWith("/")) cmd = cmd.substring(1);
+            if (!cmd.toLowerCase(java.util.Locale.ROOT).startsWith("cadmin")) return;
+            ServerPlayer p = e.getParseResults().getContext().getSource().getPlayer();
+            if (p != null && p.getServer() != null) p.getServer().execute(() -> DoctorSync.send(p));
+        });
         bus.addListener(ServerStoppingEvent.class, e -> { Hospital.clearAll(); DoctorSync.clearAll(); });
     }
 
