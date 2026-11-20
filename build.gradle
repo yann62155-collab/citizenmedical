@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev' version '2.0.78'
+}
+
+version = mod_version
+group = mod_group_id
+base { archivesName = mod_id }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+repositories { mavenCentral() }
+
+neoForge {
+    // Resout exactement net.neoforged:neoforge:21.1.215
+    version = project.neo_version
+    runs {
+        client { client() }
+        server { server(); programArguments.add('--nogui') }
+    }
+    mods {
+        "${mod_id}" { sourceSet sourceSets.main }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }

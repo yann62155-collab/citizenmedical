@@ -1,0 +1,8 @@
+{
+  "item.citizenmedical.bandage": "Bandage",
+  "item.citizenmedical.bandage.tooltip": "Right-click: bandage your wound (or another player's)",
+  "death.attack.citizenmedical.bleeding": "%1$s bled out",
+  "death.attack.citizenmedical.bleeding.player": "%1$s bled out because of %2$s",
+  "key.citizenmedical.cursor": "Doctor mode (examine a player)",
+  "key.categories.citizenmedical": "Citizen Medical"
+}

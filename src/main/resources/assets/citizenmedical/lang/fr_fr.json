@@ -1,0 +1,8 @@
+{
+  "item.citizenmedical.bandage": "Bandage",
+  "item.citizenmedical.bandage.tooltip": "Clic droit : bander sa blessure (ou celle d'un joueur)",
+  "death.attack.citizenmedical.bleeding": "%1$s s'est vidé de son sang",
+  "death.attack.citizenmedical.bleeding.player": "%1$s s'est vidé de son sang à cause de %2$s",
+  "key.citizenmedical.cursor": "Mode médecin (examiner un joueur)",
+  "key.categories.citizenmedical": "Citizen Médical"
+}

@@ -1,0 +1,34 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "citizenmedical"
+version = "1.0.0"
+displayName = "Citizen Medical"
+logoFile = "logo.png"
+authors = "Citizen"
+description = '''
+Blessures, saignement, bandages et boiterie. Les medecins de l'entreprise Hopital (Citizen Economy) examinent et soignent les joueurs (touche Alt + clic droit).
+'''
+
+[[dependencies.citizenmedical]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.215]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.citizenmedical]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.citizenmedical]]
+modId = "citizeneconomy"
+type = "optional"
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"
