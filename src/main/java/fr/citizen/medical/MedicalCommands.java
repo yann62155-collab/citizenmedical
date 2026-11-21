@@ -41,10 +41,10 @@ public final class MedicalCommands {
                 }))
                 .then(Commands.literal("hopital").requires(s -> s.hasPermission(2)).executes(c -> {
                     ServerPlayer p = c.getSource().getPlayerOrException();
-                    MedicalConfig.Data d = MedicalConfig.get();
-                    d.hopitalDefini = true;
-                    d.hopitalDimension = p.level().dimension().location().toString();
-                    d.hopitalX = p.getX(); d.hopitalY = p.getY(); d.hopitalZ = p.getZ();
+                    MedicalConfig.Data cfg = MedicalConfig.get();
+                    cfg.hopitalDefini = true;
+                    cfg.hopitalDimension = p.level().dimension().location().toString();
+                    cfg.hopitalX = p.getX(); cfg.hopitalY = p.getY(); cfg.hopitalZ = p.getZ();
                     MedicalConfig.save();
                     int beds = BedRegistry.get(p.server).size();
                     c.getSource().sendSuccess(() -> Component.literal("Point d'hôpital de secours défini ici. Lits d'hôpital posés : " + beds
