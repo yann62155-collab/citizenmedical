@@ -156,6 +156,15 @@ public final class Wounds {
         return true;
     }
 
+    /** Apres un passage "a terre" : blessure grave (bandee par l'hopital), boiterie jusqu'au soin d'un medecin. */
+    public static void severe(ServerPlayer p) {
+        State s = get(p);
+        if (s.wounded() && !s.treated()) put(p, new State(true, s.cause(), true, false, s.ageSec(), Math.min(s.bleedClock(), interval(true) - 1)));
+        else put(p, new State(true, "Grièvement blessé (inconscient)", true, false, 0, 0));
+        applyLimp(p, true);
+        sync(p);
+    }
+
     /** Efface tout (guerison complete, mort, commande admin). */
     public static void clear(ServerPlayer p) {
         put(p, State.NONE);
@@ -171,6 +180,7 @@ public final class Wounds {
             applyLimp(p, false);
             return;
         }
+        if (Downed.isDowned(p)) return; // a terre : pas de saignement, la boiterie reprend au reveil
         int age = s.ageSec() + 1;
         int clock = s.bleedClock();
         if (s.bleeding()) {

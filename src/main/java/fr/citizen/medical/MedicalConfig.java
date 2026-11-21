@@ -49,6 +49,15 @@ public final class MedicalConfig {
         public List<String> emblemesHopital = new ArrayList<>(List.of("HOP"));
         public List<String> matriculesHopital = new ArrayList<>();
         public List<String> motsClesHopital = new ArrayList<>();
+        /** A la mort, le joueur reste "a terre" au lieu de mourir. */
+        public boolean aTerreActif = true;
+        /** Duree a terre avant le transport automatique a l'hopital (en pause pendant qu'on le porte). */
+        public int secondesATerre = 90;
+        /** Point d'hopital de secours si aucun lit d'hopital n'est pose (/medical hopital). */
+        public boolean hopitalDefini = false;
+        public String hopitalDimension = "minecraft:overworld";
+        public double hopitalX, hopitalY, hopitalZ;
+
         /** true = les operateurs (OP niveau 2) ont aussi les droits de medecin sans etre embauches. */
         public boolean opsSontMedecins = false;
     }

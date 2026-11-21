@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "citizenmedical:block/lit_hopital_side",
+    "top": "citizenmedical:block/lit_hopital_top",
+    "side": "citizenmedical:block/lit_hopital_side",
+    "bottom": "minecraft:block/iron_block",
+    "pillow": "minecraft:block/white_wool"
+  },
+  "elements": [
+    { "from": [0, 3, 0], "to": [16, 9, 16],
+      "faces": {
+        "up":    { "uv": [0, 0, 16, 16], "texture": "#top" },
+        "down":  { "uv": [0, 0, 16, 16], "texture": "#bottom" },
+        "north": { "uv": [0, 7, 16, 13], "texture": "#side" },
+        "south": { "uv": [0, 7, 16, 13], "texture": "#side" },
+        "east":  { "uv": [0, 7, 16, 13], "texture": "#side" },
+        "west":  { "uv": [0, 7, 16, 13], "texture": "#side" }
+      }
+    },
+    { "from": [3, 9, 1], "to": [13, 11, 5],
+      "faces": {
+        "up":    { "uv": [3, 1, 13, 5], "texture": "#pillow" },
+        "north": { "uv": [3, 0, 13, 2], "texture": "#pillow" },
+        "south": { "uv": [3, 0, 13, 2], "texture": "#pillow" },
+        "east":  { "uv": [1, 0, 5, 2], "texture": "#pillow" },
+        "west":  { "uv": [1, 0, 5, 2], "texture": "#pillow" }
+      }
+    },
+    { "from": [0, 0, 0], "to": [2, 3, 2], "faces": { "north": {"uv":[0,0,2,3],"texture":"#bottom"}, "south": {"uv":[0,0,2,3],"texture":"#bottom"}, "east": {"uv":[0,0,2,3],"texture":"#bottom"}, "west": {"uv":[0,0,2,3],"texture":"#bottom"}, "down": {"uv":[0,0,2,2],"texture":"#bottom"} } },
+    { "from": [14, 0, 0], "to": [16, 3, 2], "faces": { "north": {"uv":[0,0,2,3],"texture":"#bottom"}, "south": {"uv":[0,0,2,3],"texture":"#bottom"}, "east": {"uv":[0,0,2,3],"texture":"#bottom"}, "west": {"uv":[0,0,2,3],"texture":"#bottom"}, "down": {"uv":[0,0,2,2],"texture":"#bottom"} } },
+    { "from": [0, 0, 14], "to": [2, 3, 16], "faces": { "north": {"uv":[0,0,2,3],"texture":"#bottom"}, "south": {"uv":[0,0,2,3],"texture":"#bottom"}, "east": {"uv":[0,0,2,3],"texture":"#bottom"}, "west": {"uv":[0,0,2,3],"texture":"#bottom"}, "down": {"uv":[0,0,2,2],"texture":"#bottom"} } },
+    { "from": [14, 0, 14], "to": [16, 3, 16], "faces": { "north": {"uv":[0,0,2,3],"texture":"#bottom"}, "south": {"uv":[0,0,2,3],"texture":"#bottom"}, "east": {"uv":[0,0,2,3],"texture":"#bottom"}, "west": {"uv":[0,0,2,3],"texture":"#bottom"}, "down": {"uv":[0,0,2,2],"texture":"#bottom"} } }
+  ]
+}

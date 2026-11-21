@@ -11,6 +11,11 @@ public final class ClientHooks {
 
     public static void onDoctor(DoctorStatePayload p) { ClientState.doctor = p.doctor(); }
 
+    public static void onDowned(fr.citizen.medical.net.DownedListPayload p) {
+        ClientState.downed.clear();
+        ClientState.downed.addAll(p.players());
+    }
+
     public static void onSelf(SelfStatePayload p) {
         ClientState.self = p.wounded() ? p : null;
         ClientState.selfAt = System.currentTimeMillis();

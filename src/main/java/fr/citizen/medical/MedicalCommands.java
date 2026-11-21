@@ -33,6 +33,35 @@ public final class MedicalCommands {
                                         .executes(c -> wound(c, StringArgumentType.getString(c, "cause"))))))
                 .then(Commands.literal("guerir").requires(s -> s.hasPermission(2))
                         .then(Commands.argument("joueur", EntityArgument.player()).executes(MedicalCommands::cure)))
+                .then(Commands.literal("poser").executes(c -> {
+                    ServerPlayer p = c.getSource().getPlayerOrException();
+                    if (Downed.carriedBy(p) == null) { p.sendSystemMessage(Component.literal("Vous ne portez personne.").withStyle(ChatFormatting.GRAY)); return 0; }
+                    Downed.drop(p, true);
+                    return 1;
+                }))
+                .then(Commands.literal("hopital").requires(s -> s.hasPermission(2)).executes(c -> {
+                    ServerPlayer p = c.getSource().getPlayerOrException();
+                    MedicalConfig.Data d = MedicalConfig.get();
+                    d.hopitalDefini = true;
+                    d.hopitalDimension = p.level().dimension().location().toString();
+                    d.hopitalX = p.getX(); d.hopitalY = p.getY(); d.hopitalZ = p.getZ();
+                    MedicalConfig.save();
+                    int beds = BedRegistry.get(p.server).size();
+                    c.getSource().sendSuccess(() -> Component.literal("Point d'hôpital de secours défini ici. Lits d'hôpital posés : " + beds
+                            + " (les joueurs à terre vont d'abord sur le lit le plus proche)."), true);
+                    return 1;
+                }))
+                .then(Commands.literal("relever").requires(s -> s.hasPermission(2))
+                        .then(Commands.argument("joueur", EntityArgument.player()).executes(c -> {
+                            ServerPlayer t = EntityArgument.getPlayer(c, "joueur");
+                            if (!Downed.isDowned(t)) { c.getSource().sendFailure(Component.literal(t.getGameProfile().getName() + " n'est pas à terre.")); return 0; }
+                            t.stopRiding();
+                            Downed.end(t);
+                            t.setHealth(t.getMaxHealth());
+                            t.sendSystemMessage(Component.literal("✚ Un administrateur vous a relevé.").withStyle(ChatFormatting.GREEN));
+                            c.getSource().sendSuccess(() -> Component.literal(t.getGameProfile().getName() + " est relevé."), true);
+                            return 1;
+                        })))
                 .then(Commands.literal("recharger").requires(s -> s.hasPermission(2)).executes(c -> {
                     MedicalConfig.load();
                     Hospital.clearAll();
@@ -59,7 +88,9 @@ public final class MedicalCommands {
                 "/medical soigner <joueur> — (médecin) soigner un joueur à côté de vous",
                 "Bandage : clic droit pour se bander, ou clic droit sur un joueur blessé",
                 "Médecin : touche Alt puis clic droit sur un joueur (ou accroupi + clic droit main vide)",
-                "OP : /medical blesser <joueur> [cause] · /medical guerir <joueur> · /medical recharger"};
+                "À terre : accroupi + clic droit main vide pour porter, clic droit sur un lit d'hôpital pour l'y déposer, /medical poser",
+                "Lit d'hôpital : clic droit = santé à 100 %",
+                "OP : /medical blesser <joueur> [cause] · /medical guerir <joueur> · /medical relever <joueur> · /medical hopital · /medical recharger"};
         for (String l : lines) s.sendSystemMessage(Component.literal(l).withStyle(l.startsWith("✚") ? ChatFormatting.GOLD : ChatFormatting.GRAY));
         return 1;
     }
@@ -92,6 +123,7 @@ public final class MedicalCommands {
         if (!Hospital.isDoctor(doc)) {
             return Hospital.known(doc.getUUID()) ? "Seuls les médecins embauchés à l'hôpital (emblème HOP) peuvent soigner." : "Vérification de votre métier en cours… réessayez dans un instant.";
         }
+        if (Downed.isDowned(t)) return "Ce patient est à terre : portez-le jusqu'à un lit d'hôpital (accroupi + clic droit) avant de le soigner.";
         if (doc == t) return "Un médecin ne peut pas se soigner lui-même : faites appel à un collègue.";
         if ((doc.level() != t.level() || doc.distanceTo(t) > MedicalConfig.get().distanceSoin)) {
             return "Approchez-vous du patient (moins de " + (int) MedicalConfig.get().distanceSoin + " blocs) pour le soigner.";

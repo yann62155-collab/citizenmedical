@@ -27,6 +27,8 @@ public final class Network {
                 (p, ctx) -> fr.citizen.medical.client.ClientHooks.onDoctor(p));
         r.playToClient(SelfStatePayload.TYPE, SelfStatePayload.CODEC,
                 (p, ctx) -> fr.citizen.medical.client.ClientHooks.onSelf(p));
+        r.playToClient(DownedListPayload.TYPE, DownedListPayload.CODEC,
+                (p, ctx) -> fr.citizen.medical.client.ClientHooks.onDowned(p));
         r.playToClient(WoundInfoPayload.TYPE, WoundInfoPayload.CODEC,
                 (p, ctx) -> fr.citizen.medical.client.ClientHooks.onInfo(p));
         r.playToServer(RequestWoundsPayload.TYPE, RequestWoundsPayload.CODEC, (p, ctx) -> {

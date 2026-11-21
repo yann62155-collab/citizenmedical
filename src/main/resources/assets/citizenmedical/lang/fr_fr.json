@@ -4,5 +4,6 @@
   "death.attack.citizenmedical.bleeding": "%1$s s'est vidé de son sang",
   "death.attack.citizenmedical.bleeding.player": "%1$s s'est vidé de son sang à cause de %2$s",
   "key.citizenmedical.cursor": "Mode médecin (examiner un joueur)",
-  "key.categories.citizenmedical": "Citizen Médical"
+  "key.categories.citizenmedical": "Citizen Médical",
+  "block.citizenmedical.lit_hopital": "Lit d'hôpital"
 }

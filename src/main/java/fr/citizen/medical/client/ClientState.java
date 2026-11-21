@@ -9,9 +9,17 @@ public final class ClientState {
     /** Heure locale (ms) de reception de {@link #self}, pour le compte a rebours. */
     public static long selfAt;
 
-    public static void reset() { doctor = false; self = null; selfAt = 0; }
+    /** joueurs a terre (UUID) */
+    public static final java.util.Set<java.util.UUID> downed = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    public static void reset() { doctor = false; self = null; selfAt = 0; downed.clear(); }
 
     public static boolean limping() { return self != null && self.wounded(); }
+
+    public static boolean selfDowned() {
+        var mc = net.minecraft.client.Minecraft.getInstance();
+        return mc.player != null && downed.contains(mc.player.getUUID());
+    }
 
     private ClientState() { }
 }

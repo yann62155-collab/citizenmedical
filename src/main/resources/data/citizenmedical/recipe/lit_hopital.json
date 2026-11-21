@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["WBW", "III"],
+  "key": {
+    "W": { "item": "minecraft:white_wool" },
+    "B": { "item": "citizenmedical:bandage" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": { "id": "citizenmedical:lit_hopital", "count": 1 }
+}

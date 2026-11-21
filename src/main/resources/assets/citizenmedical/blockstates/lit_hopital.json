@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "citizenmedical:block/lit_hopital" },
+    "facing=east":  { "model": "citizenmedical:block/lit_hopital", "y": 90 },
+    "facing=south": { "model": "citizenmedical:block/lit_hopital", "y": 180 },
+    "facing=west":  { "model": "citizenmedical:block/lit_hopital", "y": 270 }
+  }
+}

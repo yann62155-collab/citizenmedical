@@ -34,12 +34,35 @@ public final class ClientSetup {
             // Si Citizen Admin a deja ouvert son curseur sur la meme touche, on ne double pas l'ecran.
             if (mc.screen == null && mc.player != null && ClientState.doctor) mc.setScreen(new MedicalCursorScreen());
         }
+        // Joueurs a terre : affiches allonges (sauf s'ils sont portes).
+        if (mc.level != null) {
+            for (net.minecraft.world.entity.player.Player pl : mc.level.players()) {
+                boolean down = ClientState.downed.contains(pl.getUUID()) && !pl.isPassenger();
+                if (down) {
+                    if (pl.getForcedPose() != net.minecraft.world.entity.Pose.SWIMMING) pl.setForcedPose(net.minecraft.world.entity.Pose.SWIMMING);
+                    FORCED.add(pl.getUUID());
+                } else if (FORCED.remove(pl.getUUID()) && pl.getForcedPose() == net.minecraft.world.entity.Pose.SWIMMING) {
+                    pl.setForcedPose(null);
+                }
+            }
+        }
+        if (mc.player != null && ClientState.selfDowned() && mc.player.isSprinting()) mc.player.setSprinting(false);
         // Un joueur qui boite ne peut pas courir.
         if (mc.player != null && ClientState.limping() && mc.player.isSprinting()) mc.player.setSprinting(false);
     }
 
+    private static final java.util.Set<java.util.UUID> FORCED = new java.util.HashSet<>();
+
     private static void renderHud(GuiGraphics g) {
         Minecraft mc = Minecraft.getInstance();
+        if (!mc.options.hideGui && mc.player != null && ClientState.selfDowned()) {
+            int w = g.guiWidth(), h = g.guiHeight();
+            g.fill(0, 0, w, h, 0x55400000);
+            String t = "✚ À TERRE";
+            String t2 = mc.player.isPassenger() ? "Vous êtes porté jusqu'à l'hôpital…" : "Attendez qu'on vous porte, ou le transport à l'hôpital";
+            g.drawCenteredString(mc.font, t, w / 2, h / 2 - 20, 0xFFE05050);
+            g.drawCenteredString(mc.font, t2, w / 2, h / 2 - 6, 0xFFEADBC0);
+        }
         if (mc.options.hideGui || mc.player == null || ClientState.self == null) return;
         var s = ClientState.self;
         int elapsed = (int) ((System.currentTimeMillis() - ClientState.selfAt) / 1000L);
