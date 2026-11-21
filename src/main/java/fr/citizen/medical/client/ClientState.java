@@ -12,7 +12,10 @@ public final class ClientState {
     /** joueurs a terre (UUID) */
     public static final java.util.Set<java.util.UUID> downed = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
-    public static void reset() { doctor = false; self = null; selfAt = 0; downed.clear(); }
+    /** joueurs allonges sur un lit d'hopital */
+    public static final java.util.Set<java.util.UUID> lying = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    public static void reset() { doctor = false; self = null; selfAt = 0; downed.clear(); lying.clear(); }
 
     public static boolean limping() { return self != null && self.wounded(); }
 

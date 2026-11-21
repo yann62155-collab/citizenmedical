@@ -72,6 +72,7 @@ public final class MedicalEvents {
         });
         bus.addListener(PlayerEvent.PlayerLoggedOutEvent.class, e -> {
             Hospital.forget(e.getEntity().getUUID());
+            if (e.getEntity() instanceof ServerPlayer sp) Lying.stop(sp);
             DoctorSync.forget(e.getEntity().getUUID());
         });
         // A la mort, la blessure disparait.
@@ -130,7 +131,7 @@ public final class MedicalEvents {
     // ------------------------------------------------------------------ tick
 
     private static void onTick(ServerTickEvent.Post e) {
-        for (ServerPlayer p : List.copyOf(e.getServer().getPlayerList().getPlayers())) Downed.tickFast(p);
+        for (ServerPlayer p : List.copyOf(e.getServer().getPlayerList().getPlayers())) { Downed.tickFast(p); Lying.tick(p); }
         if (++ticks % 20 != 0) return;
         for (ServerPlayer p : List.copyOf(e.getServer().getPlayerList().getPlayers())) {
             Downed.tickSecond(p);
@@ -196,13 +197,18 @@ public final class MedicalEvents {
                     + " sur le lit d'hôpital. Un médecin doit maintenant le soigner.").withStyle(ChatFormatting.GREEN));
             return;
         }
-        if (p.getHealth() >= p.getMaxHealth()) {
-            p.displayClientMessage(Component.literal("✚ Lit d'hôpital : vous êtes déjà en pleine santé.").withStyle(ChatFormatting.GRAY), true);
-            return;
+        if (Lying.isLying(p)) return;
+        for (ServerPlayer o : level.players()) {
+            if (o != p && Lying.isLying(o) && o.blockPosition().distSqr(pos) <= 1) {
+                p.displayClientMessage(Component.literal("✚ Ce lit est occupé.").withStyle(ChatFormatting.GRAY), true);
+                return;
+            }
         }
+        boolean hurt = p.getHealth() < p.getMaxHealth();
         p.setHealth(p.getMaxHealth());
         level.playSound(null, pos, net.minecraft.sounds.SoundEvents.WOOL_PLACE, net.minecraft.sounds.SoundSource.BLOCKS, 1f, 0.9f);
-        p.displayClientMessage(Component.literal("✚ Vous vous reposez dans le lit d'hôpital : santé à 100 %.").withStyle(ChatFormatting.GREEN), true);
+        Lying.start(p, level, pos);
+        if (hurt) p.sendSystemMessage(Component.literal("✚ Vous vous reposez dans le lit d'hôpital : santé à 100 %. Accroupissez-vous pour vous lever.").withStyle(ChatFormatting.GREEN));
     }
 
     public static java.util.List<String> describe(Wounds.State s) {

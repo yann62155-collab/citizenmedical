@@ -11,11 +11,13 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 import java.util.UUID;
 
-/** Serveur -> clients : joueurs actuellement a terre (affiches allonges). */
-public record DownedListPayload(List<UUID> players) implements CustomPacketPayload {
+/** Serveur -> clients : joueurs a terre et joueurs allonges sur un lit d'hopital. */
+public record DownedListPayload(List<UUID> players, List<UUID> lying) implements CustomPacketPayload {
     public static final Type<DownedListPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CitizenMedical.MOD_ID, "downed_list"));
     public static final StreamCodec<ByteBuf, DownedListPayload> CODEC = StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC.apply(ByteBufCodecs.list()), DownedListPayload::players, DownedListPayload::new);
+            UUIDUtil.STREAM_CODEC.apply(ByteBufCodecs.list()), DownedListPayload::players,
+            UUIDUtil.STREAM_CODEC.apply(ByteBufCodecs.list()), DownedListPayload::lying,
+            DownedListPayload::new);
 
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
 }

@@ -37,11 +37,13 @@ public final class ClientSetup {
         // Joueurs a terre : affiches allonges (sauf s'ils sont portes).
         if (mc.level != null) {
             for (net.minecraft.world.entity.player.Player pl : mc.level.players()) {
-                boolean down = ClientState.downed.contains(pl.getUUID()) && !pl.isPassenger();
-                if (down) {
-                    if (pl.getForcedPose() != net.minecraft.world.entity.Pose.SWIMMING) pl.setForcedPose(net.minecraft.world.entity.Pose.SWIMMING);
+                net.minecraft.world.entity.Pose want = null;
+                if (ClientState.lying.contains(pl.getUUID())) want = net.minecraft.world.entity.Pose.SLEEPING;
+                else if (ClientState.downed.contains(pl.getUUID()) && !pl.isPassenger()) want = net.minecraft.world.entity.Pose.SWIMMING;
+                if (want != null) {
+                    if (pl.getForcedPose() != want) pl.setForcedPose(want);
                     FORCED.add(pl.getUUID());
-                } else if (FORCED.remove(pl.getUUID()) && pl.getForcedPose() == net.minecraft.world.entity.Pose.SWIMMING) {
+                } else if (FORCED.remove(pl.getUUID())) {
                     pl.setForcedPose(null);
                 }
             }

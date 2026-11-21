@@ -167,6 +167,7 @@ public final class Downed {
         p.sendSystemMessage(Component.literal("✚ " + msg + " Votre santé est restaurée, mais vous boitez : faites-vous soigner par un médecin.")
                 .withStyle(ChatFormatting.GREEN));
         Wounds.severe(p);
+        Lying.start(p, level, bed);
     }
 
     /** Fin du compte a rebours (ou reconnexion a terre) : lit d'hopital le plus proche, sinon point d'hopital, sinon spawn. */
@@ -218,7 +219,7 @@ public final class Downed {
         if (server == null) return;
         List<UUID> ids = new ArrayList<>();
         for (ServerPlayer o : server.getPlayerList().getPlayers()) if (isDowned(o)) ids.add(o.getUUID());
-        DownedListPayload pl = new DownedListPayload(ids);
+        DownedListPayload pl = new DownedListPayload(ids, new ArrayList<>(Lying.ids()));
         for (ServerPlayer o : server.getPlayerList().getPlayers()) {
             if (o.connection.hasChannel(DownedListPayload.TYPE)) PacketDistributor.sendToPlayer(o, pl);
         }

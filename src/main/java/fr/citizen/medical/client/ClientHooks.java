@@ -14,6 +14,8 @@ public final class ClientHooks {
     public static void onDowned(fr.citizen.medical.net.DownedListPayload p) {
         ClientState.downed.clear();
         ClientState.downed.addAll(p.players());
+        ClientState.lying.clear();
+        ClientState.lying.addAll(p.lying());
     }
 
     public static void onSelf(SelfStatePayload p) {
